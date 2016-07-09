@@ -46,7 +46,7 @@ bot.on("message", function(message){
       };
       db.insert(doc, function (err, newDoc) {
       });
-      /* Filestore type of shit.
+      /* Filestore type of shit. Not db.
       fs.appendFile("./infos.txt", message.author.id+","+infoArray+"\n", function(err){
         if(err) {
           return console.log(err);
