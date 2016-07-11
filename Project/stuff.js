@@ -37,7 +37,7 @@ bot.on("message", function(message){
     //this clusterfuck of code.
     if(infoArray.length != 5) {
       console.log("incorrect input.")
-      bot.reply("You fucked something up please retry.");
+      bot.reply(message,"You fucked something up please retry.");
     } else {
       //this is the section for printing back to the discord channel using the reply function
       bot.reply(message," Your stored information is: \n"
@@ -76,10 +76,19 @@ bot.on("message", function(message){
   //for some fuck your ass reason I can't get the bot to print the db query(find{Same as SELECT in SQL}) to the discord channel using reply OR message.
   //I'm 100% positive this is my noobary with JS at work fuck you all :middle_finger:
   //This is currently preventing me from continuing anything else that I'd like to get done.
-    if(message.content.startsWith("poo")) {
-       var qt = db.find({_id : message.author.id}, function (err,docs){ console.log(docs); });
-       bot.reply(qt);
-    };
+  //---------------------------------------------------------------------------
+
+  /* You know it's serious when we have to comment block shit....
+  Okay so let's go over the problem.
+  The db.find method below outputs the information I need to query and send back to the discord chat only in the function(err,docs).
+  When outputting docs using bot.sendMessage(docs); the bot returns [object Object].
+  Thanks to the help of Kat and Lido, I've realized somewhat of the direction I have to follow in converting the Object
+  into string to be parsed and fed back properly.
+  I know the direction but not the method to use, where I do sortof want to figure it out myself, any help / pointer is much welcomed.
+  */
+  if(message.content.startsWith("poo")) {
+    db.find({_id : message.author.id}, function (err,docs){ /* this gonna make me lose my mind */ })
+  };
 
   console.log(message.author+" "+message.content);
 });
