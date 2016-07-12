@@ -1,20 +1,34 @@
-//Requires.... The cat variable links to my bots key, as I was strining this dev at the time and did not want everyone to see the key for the bot(Thanks Kat)
-var Discord = require("discord.js");
-var bot = new Discord.Client();
-var cat = require("./safeKek/poop.js");
-var fs = require('fs');
-//Requs for the database, linking the database to the db var
-var Datastore = require('nedb')
-  , db = new Datastore({ filename: './data.db', autoload: true});
+// Make sure discord.js and nedb have actually been installed first.
+try {
+  var Discord = require( 'discord.js' );
+  var fs = require( 'fs' );
+  var Datastore = require( 'nedb' );
+} catch( e ) {
+  console.log( e.stack );
+  console.log( 'Please run `npm install` to install dependencies.' );
+}
 
+
+try {
+  var Auth = require( './auth.json' );
+} catch( e ) {
+  console.log( e.stack );
+  console.log( 'Please create an auth.json from auth.json.default!' );
+  process.exit();
+}
+
+var bot = new Discord.Client(),
+    //Requs for the database, linking the database to the db var
+    db  = new Datastore({ filename: './database/data.db', autoload: true });
 
 //This this prints FUCK. to the console when the bot is loaded successfully.
 bot.on("ready", ()=> {
   console.log('FUCK.')
+  console.log('To add this bot to your server, open the below URL in your browser:\n'
+    + 'https://discordapp.com/oauth2/authorize?client_id=' + Auth.appID + '&scope=bot');
 });
 
 //This is the event catcher for messages. Any time a message is sent through discord and this picks it up, it runs the contents of the function(message) through it's loops.
-//
 bot.on("message", function(message){
   /*if(message.content === "Hi"){
     bot.reply(message,"Sup, bitch.");
@@ -72,25 +86,27 @@ bot.on("message", function(message){
     };
   };
 
-  //This is what I'm fucking mother fuck stuck on god dammit fuck you all.
-  //for some fuck your ass reason I can't get the bot to print the db query(find{Same as SELECT in SQL}) to the discord channel using reply OR message.
-  //I'm 100% positive this is my noobary with JS at work fuck you all :middle_finger:
-  //This is currently preventing me from continuing anything else that I'd like to get done.
-  //---------------------------------------------------------------------------
-
-  /* You know it's serious when we have to comment block shit....
-  Okay so let's go over the problem.
-  The db.find method below outputs the information I need to query and send back to the discord chat only in the function(err,docs).
-  When outputting docs using bot.sendMessage(docs); the bot returns [object Object].
-  Thanks to the help of Kat and Lido, I've realized somewhat of the direction I have to follow in converting the Object
-  into string to be parsed and fed back properly.
-  I know the direction but not the method to use, where I do sortof want to figure it out myself, any help / pointer is much welcomed.
-  */
-  if(message.content.startsWith("poo")) {
-    db.find({_id : message.author.id}, function (err,docs){ /* this gonna make me lose my mind */ })
-  };
+  // db.find returns an array of objects, one for each "row" found.
+  if( message.content.startsWith( 'poo' ) ) {
+    db.find({ _id : message.author.id }, function ( err,docs ){
+      if( docs.length == 1 ){
+        var char = docs[0];
+        bot.reply(message," Your stored information is: \n"
+                  + "Character Name: ***" + char.fN + "***\n"
+                  + "Family Name: ***" + char.lN + "***\n"
+                  + "Character Level: ***" + char.lvl + "***\n"
+                  + "Last recorded AP: ***" + char.APs + "***\n"
+                  + "Last recorded DP: ***" + char.DPs + "***\n"
+                  + "*Combined AP/DP:* " + "***" + ( char.APs + char.DPs ) + "***");
+      } else if( docs.length > 1 ){
+        bot.reply( message, 'Multiple records found; this shit should not be happening.' );
+      } else {
+        bot.reply( message, 'No record found for you, bitchnigga.' );
+      }
+    });
+  }
 
   console.log(message.author+" "+message.content);
 });
 
-bot.loginWithToken(cat.ass);
+bot.loginWithToken( Auth.token );

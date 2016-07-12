@@ -1,0 +1,23 @@
+{
+  "name": "dbdogms",
+  "version": "0.1.0",
+  "description": "Discord Black Desert Online Guild Management System Bot",
+  "main": "dbdogms.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XxBloodyHell/DBDOGMS.git"
+  },
+  "author": "XxBloodyHell (https://github.com/XxBloodyHell)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/XxBloodyHell/DBDOGMS/issues"
+  },
+  "homepage": "https://github.com/XxBloodyHell/DBDOGMS#readme",
+  "dependencies": {
+    "discord.js": "^8.0.0",
+    "nedb": "^1.8.0"
+  }
+}
