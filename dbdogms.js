@@ -17,22 +17,27 @@ try {
   process.exit();
 }
 
+//lib shit
+try {
+  var Character = require( './lib/Character.js' );
+} catch( e ) {
+  console.log( e.stack );
+  console.log( 'Error loading Character class!' );
+  process.exit();
+}
+
 var bot = new Discord.Client(),
     //Requs for the database, linking the database to the db var
     db  = new Datastore({ filename: './database/data.db', autoload: true });
 
 //This this prints FUCK. to the console when the bot is loaded successfully.
 bot.on("ready", ()=> {
-  console.log('FUCK.')
   console.log('To add this bot to your server, open the below URL in your browser:\n'
     + 'https://discordapp.com/oauth2/authorize?client_id=' + Auth.appID + '&scope=bot');
 });
 
 //This is the event catcher for messages. Any time a message is sent through discord and this picks it up, it runs the contents of the function(message) through it's loops.
 bot.on("message", function(message){
-  /*if(message.content === "Hi"){
-    bot.reply(message,"Sup, bitch.");
-  };*/
 
   //The ! modifier is just a placeholder. I will probably replace it with "Register", so that it will look like (Register Noita Apex, etc.)
   if(message.content.startsWith("!")) {
@@ -40,35 +45,32 @@ bot.on("message", function(message){
     var usrInfo = (message.content);
     var cmdRemove = usrInfo.substring(1);
     var infoArray = cmdRemove.split(" ");
-    var usrFirstName = infoArray[0];
-    var usrLastName = infoArray[1];
-    var usrLevel = parseInt(infoArray[2]);
-    var usrAP = parseInt(infoArray[3]);
-    var usrDP = parseInt(infoArray[4]);
-    var butts = usrAP+usrDP
+    var char = new Character( infoArray );
 
     //This is where the "Magic" happens. If and when the user uses the ! modifier, everything following, assuming it's proper, will be stored into the db and printed back using
     //this clusterfuck of code.
-    if(infoArray.length != 5) {
+    if(infoArray.length != 6) {
       console.log("incorrect input.")
       bot.reply(message,"You fucked something up please retry.");
     } else {
       //this is the section for printing back to the discord channel using the reply function
-      bot.reply(message," Your stored information is: \n"
-      +"Character Name: ***"+usrFirstName+"***\n"
-      +"Family Name: ***"+usrLastName+"***\n"
-      +"Character Level: ***"+usrLevel+"***\n"
-      +"Last recorded AP: ***"+usrAP+"***\n"
-      +"Last recorded DP: ***"+usrDP+"***\n"
-      +"*Combined AP/DP:* "+"***"+butts+"***");
+      bot.reply( message," Your stored information is: \n"
+                + "Character Name: ***" + char.firstName + "***\n"
+                + "Family Name: ***" + char.familyName + "***\n"
+                + "Class: ***" + char.class + "***\n"
+                + "Character Level: ***" + char.level + "***\n"
+                + "Last recorded AP: ***" + char.ap + "***\n"
+                + "Last recorded DP: ***" + char.dp + "***\n"
+                + "*Combined AP/DP:* " + "***" + char.adp() + "***" );
 
       //this is the bit for storing the db info for the user into the doc array
       var doc = { _id: message.author.id
-        , fN: usrFirstName
-        , lN: usrLastName
-        , lvl: usrLevel
-        , APs: usrAP
-        , DPs: usrDP
+        , fN: char.firstName
+        , lN: char.familyName
+        , class: char.class
+        , lvl: char.level
+        , APs: char.ap
+        , DPs: char.dp
       };
       //this is the code for storing the doc array into the database.
       db.insert(doc, function (err, newDoc) {
@@ -86,20 +88,18 @@ bot.on("message", function(message){
     };
   };
 
-  // db.find returns an array of objects, one for each "row" found.
   if( message.content.startsWith( 'poo' ) ) {
-    db.find({ _id : message.author.id }, function ( err,docs ){
-      if( docs.length == 1 ){
-        var char = docs[0];
-        bot.reply(message," Your stored information is: \n"
-                  + "Character Name: ***" + char.fN + "***\n"
-                  + "Family Name: ***" + char.lN + "***\n"
-                  + "Character Level: ***" + char.lvl + "***\n"
-                  + "Last recorded AP: ***" + char.APs + "***\n"
-                  + "Last recorded DP: ***" + char.DPs + "***\n"
-                  + "*Combined AP/DP:* " + "***" + ( char.APs + char.DPs ) + "***");
-      } else if( docs.length > 1 ){
-        bot.reply( message, 'Multiple records found; this shit should not be happening.' );
+    db.findOne({ _id : message.author.id }, function ( err, result ){
+      if( result ){
+        var char = new Character( result, 'nedb' );
+        bot.reply( message," Your stored information is: \n"
+                  + "Character Name: ***" + char.firstName + "***\n"
+                  + "Family Name: ***" + char.familyName + "***\n"
+                  + "Class: ***" + char.class + "***\n"
+                  + "Character Level: ***" + char.level + "***\n"
+                  + "Last recorded AP: ***" + char.ap + "***\n"
+                  + "Last recorded DP: ***" + char.dp + "***\n"
+                  + "*Combined AP/DP:* " + "***" + char.adp() + "***" );
       } else {
         bot.reply( message, 'No record found for you, bitchnigga.' );
       }
