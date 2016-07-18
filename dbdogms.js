@@ -40,7 +40,7 @@ bot.on("ready", ()=> {
 bot.on("message", function(message){
 
   //The ! modifier is just a placeholder. I will probably replace it with "Register", so that it will look like (Register Noita Apex, etc.)
-  if(message.content.startsWith("!")) {
+  if(message.content.startsWith("+")) {
     //Enjoy all of my cluster fuck handler variables for the user registration LOL.
     var usrInfo = (message.content);
     var cmdRemove = usrInfo.substring(1);
@@ -49,46 +49,49 @@ bot.on("message", function(message){
 
     //This is where the "Magic" happens. If and when the user uses the ! modifier, everything following, assuming it's proper, will be stored into the db and printed back using
     //this clusterfuck of code.
-    if(infoArray.length != 6) {
+    if( infoArray.length != 6 ) {
       console.log("incorrect input.")
       bot.reply(message,"You fucked something up please retry.");
     } else {
-      //this is the section for printing back to the discord channel using the reply function
-      bot.reply( message," Your stored information is: \n"
-                + "Character Name: ***" + char.firstName + "***\n"
-                + "Family Name: ***" + char.familyName + "***\n"
-                + "Class: ***" + char.class + "***\n"
-                + "Character Level: ***" + char.level + "***\n"
-                + "Last recorded AP: ***" + char.ap + "***\n"
-                + "Last recorded DP: ***" + char.dp + "***\n"
-                + "*Combined AP/DP:* " + "***" + char.adp() + "***" );
+        db.findOne( { _id: message.author.id }, function( err, result ) {
+          if( result ) {
+            console.log("This user is already in the Database.")
+            bot.reply(message, "You're aleady in the database, no need to use the register command again player ***" + char.familyName + "***")
+          } else if ( !err ){
+            //this is the section for printing back to the discord channel using the reply function
+            var doc = { _id: message.author.id
+              , fN: char.firstName
+              , lN: char.familyName
+              , class: char.class
+              , lvl: char.level
+              , APs: char.ap
+              , DPs: char.dp
+            };
+            db.insert( doc, function( err, result ) {
+              var insChar = new Character( result, 'nedb' );
+              if( !err ) {
+                bot.reply( message," Your stored information is: \n"
+                  + "Character Name: ***" + insChar.firstName + "***\n"
+                  + "Family Name: ***" + insChar.familyName + "***\n"
+                  + "Class: ***" + insChar.class + "***\n"
+                  + "Character Level: ***" + insChar.level + "***\n"
+                  + "Last recorded AP: ***" + insChar.ap + "***\n"
+                  + "Last recorded DP: ***" + insChar.dp + "***\n"
+                  + "*Combined AP/DP:* " + "***" + insChar.adp() + "***" );
+              } else {
+                bot.reply( message, 'Something went wrong...' );
+                console.log( err );
+              }
+            });
+         } else {
+           bot.reply( message, 'Something went wrong...' );
+           console.log( err );
+         }
+      })
+    }
+  }
 
-      //this is the bit for storing the db info for the user into the doc array
-      var doc = { _id: message.author.id
-        , fN: char.firstName
-        , lN: char.familyName
-        , class: char.class
-        , lvl: char.level
-        , APs: char.ap
-        , DPs: char.dp
-      };
-      //this is the code for storing the doc array into the database.
-      db.insert(doc, function (err, newDoc) {
-      });
-      //This was some shit for normal file storage. I'd rather use the database, if I Can get querring to work properly.
-      /* Filestore type of shit. Not db.
-      fs.appendFile("./infos.txt", message.author.id+","+infoArray+"\n", function(err){
-        if(err) {
-          return console.log(err);
-        } else{
-          console.log("your shit was saved.");
-        }
-
-      }); */
-    };
-  };
-
-  if( message.content.startsWith( 'poo' ) ) {
+  if( message.content.startsWith( 'whoi' ) ) {
     db.findOne({ _id : message.author.id }, function ( err, result ){
       if( result ){
         var char = new Character( result, 'nedb' );
@@ -103,7 +106,7 @@ bot.on("message", function(message){
       } else {
         bot.reply( message, 'No record found for you, bitchnigga.' );
       }
-    });
+    })
   }
 
   console.log(message.author+" "+message.content);
