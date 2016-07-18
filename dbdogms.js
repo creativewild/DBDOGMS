@@ -109,7 +109,28 @@ bot.on("message", function(message){
     })
   }
 
-  console.log(message.author+" "+message.content);
+  if(message.content.startsWith('addRole')) {
+    bot.createRole(message.server, {
+      color : 0xFF0000,
+      hoist : false,
+      name : "Testing New Role",
+      permissions : [
+        "sendMessages"
+      ],
+      mentionable : true
+    })
+  }//this works but I need userHasRole to work. There is something fucked up about the role ID I think.
+
+  if(message.content.startsWith('cats')) {
+    var sent = (message.content)
+    var person = sent.substring(5)
+
+    bot.addMemberToRole(person, bot.role.get.id("Testing New Role"), function (err) {bot.sendMessage(err)})
+  }//???????????????????????????????????????????????????????????????????????
+
+  console.log("-----------------------------------------------------------")
+  console.log("["+message.author.username+"] Sent:\n\n"+message.content+"\n\nOn server: "+message.server.name+"\nAt time: "+Date());
+  console.log("-----------------------------------------------------------")
 });
 
 bot.loginWithToken( Auth.token );
