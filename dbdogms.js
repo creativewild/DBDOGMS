@@ -136,15 +136,14 @@ bot.on("message", function(message){
     //var sent = (message.content)
     //var person = sent.substring(5)
     bot.addMemberToRole(message.author.id, message.server.roles.get("name", "Testing New Role"), function (err) {bot.sendMessage(err)})
-  }//???????????????????????????????????????????????????????????????????????
-
+  }
   //Update AP (BASE COMPLETE)
   if(message.content.startsWith('~ap')) {
     var sent = (message.content)
     var person = sent.substring(4, 7)
 
     db.update({ _id : message.author.id }, { $set: { APs: person } }, { multi: false }, function (err, numReplaced) { if(err){bot.sendMessage(message, err)} else if (numReplaced == "1") { bot.sendMessage(message, numReplaced+" Records Replaced. Please query for updated value.")}})
-    bot.sendMessage(message, person)
+
   }
   //Update DP (BASE COMPLETE)
   if(message.content.startsWith('~dp')) {
@@ -152,7 +151,7 @@ bot.on("message", function(message){
     var person = sent.substring(4, 7)
 
     db.update({ _id : message.author.id }, { $set: { DPs: person } }, { multi: false }, function (err, numReplaced) { if(err){bot.sendMessage(message, err)} else if (numReplaced == "1") { bot.sendMessage(message, numReplaced+" Records Replaced. Please query for updated value.")}})
-    bot.sendMessage(message, person)
+
   }
   //Update Level (BASE COMPLETE)
   if(message.content.startsWith('~lvl')) {
@@ -160,12 +159,40 @@ bot.on("message", function(message){
     var person = sent.substring(4, 8)
 
     db.update({ _id : message.author.id }, { $set: { lvl: person } }, { multi: false }, function (err, numReplaced) { if(err){bot.sendMessage(message, err)} else if (numReplaced == "1") { bot.sendMessage(message, numReplaced+" Records Replaced. Please query for updated value.")}})
-    bot.sendMessage(message, person)
-  }
 
+  }
   //Delete From DB Command. (BASE COMPLETE)
   if(message.content.startsWith('delMe')) {
     db.remove({ _id : message.author.id }, { multi: true }, function (err, numRemoved) { if(err){bot.sendMessage(message, err)} else if (numRemoved == "0") { bot.sendMessage(message, numRemoved+" Records found. You were not in the Arcane Archives.")} else { bot.sendMessage(message, numRemoved+", Record deleted. You have been removed from my Database Dovahkin.") } })
+  }
+
+  var resource1 = ["Warrior", "Sorceress", "Ranger", "Berserker", "Tamer", "Musa", "Maewha", "Valkyrie", "Wizard", "Witch", "Ninja", "Kunoichi"]
+  var resource2 = [0xFF7536, 0xC659F9, 0xECFF00, 0x2CF3BC, 0xF6356C, 0x47B6FF, 0x9BF3FC, 0xFF8C4A, 0x7E32FC, 0xAA59FF, 0xBA235C, 0xC5186C]
+
+  var createClassRoles = function (classC, classN) {
+   bot.createRole(message.server, {
+     color : classC,
+     hoist : true,
+     name : classN,
+     permissions : [
+
+     ],
+     mentionable : true
+   })
+   bot.sendMessage(message, "Created role: "+classN)
+ }
+
+  if(message.content.startsWith('Create Class Roles Please!') && bot.memberHasRole(message.author.id, message.server.roles.get("name", "Developer"))) {
+    console.log("Develoepr has run create role command.")
+    bot.sendMessage(message, "Hello Developer! I am creating your roles now!")
+    for( var i = 0; i < resource1.length; i++) {
+      createClassRoles(resource2[i], resource1[i])
+    }
+  }
+
+  //broken for now
+  if(message.content.startsWith('FUCK THAT ROLE!')) {
+    for( var i = 0; i < resource1.length; i++){ bot.deleteRole(message.server.roles.get("name", resource1[i])) }
   }
 
   console.log("-------------------------------------------------------------------------")
