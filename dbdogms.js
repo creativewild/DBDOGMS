@@ -104,11 +104,12 @@ bot.on("message", function(message){
                   + "Last recorded DP: ***" + char.dp + "***\n"
                   + "*Combined AP/DP:* " + "***" + char.adp() + "***" );
       } else {
-        bot.reply( message, 'No record found for you, bitchnigga.' );
+        bot.reply( message, 'No record found for you, NOOB.' );
       }
     })
   }
 
+  //Creating role.
   if(message.content.startsWith('addRole')) {
     bot.createRole(message.server, {
       color : 0xFF0000,
@@ -121,16 +122,55 @@ bot.on("message", function(message){
     })
   }//this works but I need userHasRole to work. There is something fucked up about the role ID I think.
 
-  if(message.content.startsWith('cats')) {
-    var sent = (message.content)
-    var person = sent.substring(5)
+  //This is for finding what role the person who types ffs is, it will check if you have the "Admin" role. (NEEDS ADDITION TO FUNCTION)
+  if(message.content.startsWith('ffs')) {
+    if(bot.memberHasRole(message.author.id, message.server.roles.get("name", "Admin"))) {
+      bot.sendMessage(message,"Yeah, You have Admin.")
+    } else {
+      bot.sendMessage(message, "Either something is broke or you don't have Admin.")
+    }
+  }
 
-    bot.addMemberToRole(person, bot.role.get.id("Testing New Role"), function (err) {bot.sendMessage(err)})
+  //Adding member to role, works. But needs tweaking and what not, just like everyhing else. (NEEDS ADDITION TO FUNCTION)
+  if(message.content.startsWith('cats')) {
+    //var sent = (message.content)
+    //var person = sent.substring(5)
+    bot.addMemberToRole(message.author.id, message.server.roles.get("name", "Testing New Role"), function (err) {bot.sendMessage(err)})
   }//???????????????????????????????????????????????????????????????????????
 
-  console.log("-----------------------------------------------------------")
+  //Update AP (BASE COMPLETE)
+  if(message.content.startsWith('~ap')) {
+    var sent = (message.content)
+    var person = sent.substring(4, 7)
+
+    db.update({ _id : message.author.id }, { $set: { APs: person } }, { multi: false }, function (err, numReplaced) { if(err){bot.sendMessage(message, err)} else if (numReplaced == "1") { bot.sendMessage(message, numReplaced+" Records Replaced. Please query for updated value.")}})
+    bot.sendMessage(message, person)
+  }
+  //Update DP (BASE COMPLETE)
+  if(message.content.startsWith('~dp')) {
+    var sent = (message.content)
+    var person = sent.substring(4, 7)
+
+    db.update({ _id : message.author.id }, { $set: { DPs: person } }, { multi: false }, function (err, numReplaced) { if(err){bot.sendMessage(message, err)} else if (numReplaced == "1") { bot.sendMessage(message, numReplaced+" Records Replaced. Please query for updated value.")}})
+    bot.sendMessage(message, person)
+  }
+  //Update Level (BASE COMPLETE)
+  if(message.content.startsWith('~lvl')) {
+    var sent = (message.content)
+    var person = sent.substring(4, 8)
+
+    db.update({ _id : message.author.id }, { $set: { lvl: person } }, { multi: false }, function (err, numReplaced) { if(err){bot.sendMessage(message, err)} else if (numReplaced == "1") { bot.sendMessage(message, numReplaced+" Records Replaced. Please query for updated value.")}})
+    bot.sendMessage(message, person)
+  }
+
+  //Delete From DB Command. (BASE COMPLETE)
+  if(message.content.startsWith('delMe')) {
+    db.remove({ _id : message.author.id }, { multi: true }, function (err, numRemoved) { if(err){bot.sendMessage(message, err)} else if (numRemoved == "0") { bot.sendMessage(message, numRemoved+" Records found. You were not in the Arcane Archives.")} else { bot.sendMessage(message, numRemoved+", Record deleted. You have been removed from my Database Dovahkin.") } })
+  }
+
+  console.log("-------------------------------------------------------------------------")
   console.log("["+message.author.username+"] Sent:\n\n"+message.content+"\n\nOn server: "+message.server.name+"\nOn Channel: "+message.channel.name+"\nAt time: "+Date());
-  console.log("-----------------------------------------------------------")
+  console.log("-------------------------------------------------------------------------")
 });
 
 bot.loginWithToken( Auth.token );
