@@ -167,7 +167,7 @@ bot.on("message", function(message){
   }
 
   var resource1 = ["Warrior", "Sorceress", "Ranger", "Berserker", "Tamer", "Musa", "Maewha", "Valkyrie", "Wizard", "Witch", "Ninja", "Kunoichi"]
-  var resource2 = [0xFF7536, 0xC659F9, 0xECFF00, 0x2CF3BC, 0xF6356C, 0x47B6FF, 0x9BF3FC, 0xFF8C4A, 0x7E32FC, 0xAA59FF, 0xBA235C, 0xC5186C]
+  var resource2 = [0xFF7536, 0xC659F9, 0x54BFFF, 0x2CF3BC, 0xF6356C, 0x47B6FF, 0x9BF3FC, 0xFF8C4A, 0x7E32FC, 0xAA59FF, 0xBA235C, 0xC5186C]
 
   var createClassRoles = function (classC, classN) {
    bot.createRole(message.server, {
@@ -190,10 +190,7 @@ bot.on("message", function(message){
     }
   }
 
-  //broken for now
-  if(message.content.startsWith('FUCK THAT ROLE!')) {
-    for( var i = 0; i < resource1.length; i++){ bot.deleteRole(message.server.roles.get("name", resource1[i])) }
-  }
+
 
   console.log("-------------------------------------------------------------------------")
   console.log("["+message.author.username+"] Sent:\n\n"+message.content+"\n\nOn server: "+message.server.name+"\nOn Channel: "+message.channel.name+"\nAt time: "+Date());
