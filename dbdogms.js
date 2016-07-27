@@ -36,9 +36,20 @@ bot.on("ready", ()=> {
     + 'https://discordapp.com/oauth2/authorize?client_id=' + Auth.appID + '&scope=bot');
 });
 
+  Array.prototype.contains = function(obj) {
+    var i = this.length;
+    while (i--) {
+      if (this[i] == obj) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 //This is the event catcher for messages. Any time a message is sent through discord and this picks it up, it runs the contents of the function(message) through it's loops.
 bot.on("message", function(message){
-
+  var resource1 = ["Warrior", "Sorceress", "Ranger", "Berserker", "Tamer", "Musa", "Maewha", "Valkyrie", "Wizard", "Witch", "Ninja", "Kunoichi"]
+  var resource2 = [0xFF7536, 0xC659F9, 0x54BFFF, 0x2CF3BC, 0xF6356C, 0x47B6FF, 0x9BF3FC, 0xFF8C4A, 0x7E32FC, 0xAA59FF, 0xBA235C, 0xC5186C]
   //The ! modifier is just a placeholder. I will probably replace it with "Register", so that it will look like (Register Noita Apex, etc.)
   if(message.content.startsWith("+")) {
     //Enjoy all of my cluster fuck handler variables for the user registration LOL.
@@ -49,10 +60,10 @@ bot.on("message", function(message){
 
     //This is where the "Magic" happens. If and when the user uses the ! modifier, everything following, assuming it's proper, will be stored into the db and printed back using
     //this clusterfuck of code.
-    if( infoArray.length != 6 ) {
+    if( infoArray.length != 6) {
       console.log("incorrect input.")
       bot.reply(message,"You fucked something up please retry.");
-    } else {
+    } else if( resource1.contains(infoArray[2]) ) {
         db.findOne( { _id: message.author.id }, function( err, result ) {
           if( result ) {
             console.log("This user is already in the Database.")
@@ -88,6 +99,9 @@ bot.on("message", function(message){
            console.log( err );
          }
       })
+    } else {
+      bot.reply(message, "You have entered an unauthorized class.")
+      console.log("Error. "+infoArray[2])
     }
   }
 
@@ -164,10 +178,7 @@ bot.on("message", function(message){
   //Delete From DB Command. (BASE COMPLETE)
   if(message.content.startsWith('delMe')) {
     db.remove({ _id : message.author.id }, { multi: true }, function (err, numRemoved) { if(err){bot.sendMessage(message, err)} else if (numRemoved == "0") { bot.sendMessage(message, numRemoved+" Records found. You were not in the Arcane Archives.")} else { bot.sendMessage(message, numRemoved+", Record deleted. You have been removed from my Database Dovahkin.") } })
-  }
-
-  var resource1 = ["Warrior", "Sorceress", "Ranger", "Berserker", "Tamer", "Musa", "Maewha", "Valkyrie", "Wizard", "Witch", "Ninja", "Kunoichi"]
-  var resource2 = [0xFF7536, 0xC659F9, 0x54BFFF, 0x2CF3BC, 0xF6356C, 0x47B6FF, 0x9BF3FC, 0xFF8C4A, 0x7E32FC, 0xAA59FF, 0xBA235C, 0xC5186C]
+  };
 
   var createClassRoles = function (classC, classN) {
    bot.createRole(message.server, {

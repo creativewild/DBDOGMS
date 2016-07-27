@@ -2,3 +2,7 @@
 {"_id":"159808450698674179","fN":"Azveki","lN":"Ferious","class":"Noob","lvl":1,"APs":1,"DPs":1}
 {"_id":"70921489615949824","fN":"Hugabear","lN":"Shawl","class":"Berserker","lvl":55,"APs":139,"DPs":243}
 {"_id":"84291691716034560","fN":"Crosette","lN":"Rayearth","class":"Valkyrie","lvl":56,"APs":120,"DPs":204}
+{"_id":"92738910362292224","fN":"Noita","lN":"Apex","class":"Cat","lvl":22,"APs":22,"DPs":22}
+{"$$deleted":true,"_id":"92738910362292224"}
+{"_id":"92738910362292224","fN":"Noita","lN":"Apex","class":"Wizard","lvl":56,"APs":200,"DPs":300}
+{"$$deleted":true,"_id":"92738910362292224"}
