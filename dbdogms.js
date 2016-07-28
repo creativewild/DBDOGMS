@@ -46,6 +46,41 @@ bot.on("ready", ()=> {
     return false;
   }
 
+  function monospaceColumnPad( string, width = 10, padChar = ' ' )
+  {
+    if( typeof string !== "string" ) {
+      throw new TypeError( 'Initial parameter must be in the form of a String.')
+    }
+    if( typeof width !== "number" ) {
+      throw new TypeError( 'Given column width must be in the form of a Number!' );
+    }
+    /*
+     * Usage: stringFill3("abc", 2) == "abcabc"
+     * http://www.webreference.com/programming/javascript/jkm3/3.html
+     */
+    var multString = function(x, n) {
+      var s = '';
+      for (;;) {
+          if (n & 1) s += x;
+          n >>= 1;
+          if (n) x += x;
+          else break;
+      }
+      return s;
+    }
+
+    var strWidthDiff = width - string.length;
+
+    if( strWidthDiff > 0 ) {
+      if( strWidthDiff == 1 ) return string + padChar;
+      else return string + multString( padChar, strWidthDiff );
+    } else if ( strWidthDiff < 0 ) {
+      return string.substr( 0, ( width - 1 ) );
+    } else {
+      return string;
+    }
+  }
+
 //This is the event catcher for messages. Any time a message is sent through discord and this picks it up, it runs the contents of the function(message) through it's loops.
 bot.on("message", function(message){
   var resource1 = ["Warrior", "Sorceress", "Ranger", "Berserker", "Tamer", "Musa", "Maewha", "Valkyrie", "Wizard", "Witch", "Ninja", "Kunoichi"]
@@ -60,10 +95,10 @@ bot.on("message", function(message){
 
     //This is where the "Magic" happens. If and when the user uses the ! modifier, everything following, assuming it's proper, will be stored into the db and printed back using
     //this clusterfuck of code.
-    if( infoArray.length != 6) {
+    if( infoArray.length != 6 ) {
       console.log("incorrect input.")
       bot.reply(message,"You fucked something up please retry.");
-    } else if( resource1.contains(infoArray[2]) ) {
+    } else if( resource1.contains(infoArray[2]) && bot.memberHasRole(message.author.id, message.server.roles.get("name", "Vahlok"))) {
         db.findOne( { _id: message.author.id }, function( err, result ) {
           if( result ) {
             console.log("This user is already in the Database.")
@@ -89,7 +124,10 @@ bot.on("message", function(message){
                   + "Last recorded AP: ***" + insChar.ap + "***\n"
                   + "Last recorded DP: ***" + insChar.dp + "***\n"
                   + "*Combined AP/DP:* " + "***" + insChar.adp() + "***" );
+                  bot.addMemberToRole(message.author.id, message.server.roles.get("name", insChar.class))
+                  if(adp > 3){
               } else {
+              }
                 bot.reply( message, 'Something went wrong...' );
                 console.log( err );
               }
@@ -100,8 +138,7 @@ bot.on("message", function(message){
          }
       })
     } else {
-      bot.reply(message, "You have entered an unauthorized class.")
-      console.log("Error. "+infoArray[2])
+      bot.reply(message, "\nYou have either entered an unauthorized class, or are not a member of Vahlok rank.\n Please correct your rank (Capital first letter) and or mention Fahdon.")
     }
   }
 
@@ -123,33 +160,9 @@ bot.on("message", function(message){
     })
   }
 
-  //Creating role.
-  if(message.content.startsWith('addRole')) {
-    bot.createRole(message.server, {
-      color : 0xFF0000,
-      hoist : false,
-      name : "Testing New Role",
-      permissions : [
-        "sendMessages"
-      ],
-      mentionable : true
-    })
-  }//this works but I need userHasRole to work. There is something fucked up about the role ID I think.
-
-  //This is for finding what role the person who types ffs is, it will check if you have the "Admin" role. (NEEDS ADDITION TO FUNCTION)
-  if(message.content.startsWith('ffs')) {
-    if(bot.memberHasRole(message.author.id, message.server.roles.get("name", "Admin"))) {
-      bot.sendMessage(message,"Yeah, You have Admin.")
-    } else {
-      bot.sendMessage(message, "Either something is broke or you don't have Admin.")
-    }
-  }
-
-  //Adding member to role, works. But needs tweaking and what not, just like everyhing else. (NEEDS ADDITION TO FUNCTION)
-  if(message.content.startsWith('cats')) {
-    //var sent = (message.content)
-    //var person = sent.substring(5)
-    bot.addMemberToRole(message.author.id, message.server.roles.get("name", "Testing New Role"), function (err) {bot.sendMessage(err)})
+  //broken and idk why.
+  var rmvRoles = function(rlname) {
+    bot.removeMemberFromRole(message.author.id, message.server.roles.get("name", rlname), function ( err ) {console.log(err)})
   }
   //Update AP (BASE COMPLETE)
   if(message.content.startsWith('~ap')) {
@@ -175,9 +188,12 @@ bot.on("message", function(message){
     db.update({ _id : message.author.id }, { $set: { lvl: person } }, { multi: false }, function (err, numReplaced) { if(err){bot.sendMessage(message, err)} else if (numReplaced == "1") { bot.sendMessage(message, numReplaced+" Records Replaced. Please query for updated value.")}})
 
   }
-  //Delete From DB Command. (BASE COMPLETE)
+  //Delete From DB Command. (BASE COMPLETE-- Needs a fixin)
   if(message.content.startsWith('delMe')) {
     db.remove({ _id : message.author.id }, { multi: true }, function (err, numRemoved) { if(err){bot.sendMessage(message, err)} else if (numRemoved == "0") { bot.sendMessage(message, numRemoved+" Records found. You were not in the Arcane Archives.")} else { bot.sendMessage(message, numRemoved+", Record deleted. You have been removed from my Database Dovahkin.") } })
+    /*for( var i = 0; i < resource1.length; i++) {
+      rmvRoles(resource1[i])
+    }*/
   };
 
   var createClassRoles = function (classC, classN) {
@@ -201,6 +217,26 @@ bot.on("message", function(message){
     }
   }
 
+  if(message.content.startsWith('Output Users') && bot.memberHasRole(message.author.id, message.server.roles.get("name", "Developer"))) {
+    var catass = message.server.usersWithRole(message.server.roles.get("name", "Vahlok"))
+    fs.writeFile('message.txt', catass)
+  }
+
+  if(message.content.startsWith('!ListAll')) {
+    db.find({}, function (err, doc) {
+      var outputShit = ""
+      if(err){
+        console.log(err)
+      } else {
+        for( var i = 0; i < doc.length; i++){
+          var oData = new Character( doc[i], 'nedb')
+          outputShit+= monospaceColumnPad(oData.firstName, 12)+" "+monospaceColumnPad(oData.familyName, 12)+" "+monospaceColumnPad(oData.class, 9)+" "+monospaceColumnPad(oData.level.toString(), 5)+" "+monospaceColumnPad(oData.ap.toString(), 4)+" "+monospaceColumnPad(oData.dp.toString(), 4)+" "+monospaceColumnPad(oData.adp().toString(), 5)+"\n"
+        }
+        bot.sendMessage(message, "```"+monospaceColumnPad("First Name", 13)+monospaceColumnPad("Last Name", 13)+monospaceColumnPad("Class", 10)+monospaceColumnPad("Level", 6)+monospaceColumnPad("AP", 5)+monospaceColumnPad("DP", 5)+monospaceColumnPad("AP/DP", 5)+"\n"+outputShit+"```")
+      }})
+  }
+
+  if(message.content.match('Nightbot')) {bot.sendMessage(message, "Fuck a night bot, nigga.")}
 
 
   console.log("-------------------------------------------------------------------------")
