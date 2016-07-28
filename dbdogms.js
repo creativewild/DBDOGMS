@@ -85,6 +85,19 @@ bot.on("ready", ()=> {
 bot.on("message", function(message){
   var resource1 = ["Warrior", "Sorceress", "Ranger", "Berserker", "Tamer", "Musa", "Maewha", "Valkyrie", "Wizard", "Witch", "Ninja", "Kunoichi"]
   var resource2 = [0xFF7536, 0xC659F9, 0x54BFFF, 0x2CF3BC, 0xF6356C, 0x47B6FF, 0x9BF3FC, 0xFF8C4A, 0x7E32FC, 0xAA59FF, 0xBA235C, 0xC5186C]
+  var createClassRoles = function (classC, classN) {
+   bot.createRole(message.server, {
+     color : classC,
+     hoist : true,
+     name : classN,
+     permissions : [
+
+     ],
+     mentionable : true
+   })
+   bot.sendMessage(message, "Created role: "+classN)
+ }
+
   //The ! modifier is just a placeholder. I will probably replace it with "Register", so that it will look like (Register Noita Apex, etc.)
   if(message.content.startsWith("+")) {
     //Enjoy all of my cluster fuck handler variables for the user registration LOL.
@@ -125,10 +138,7 @@ bot.on("message", function(message){
                   + "Last recorded DP: ***" + insChar.dp + "***\n"
                   + "*Combined AP/DP:* " + "***" + insChar.adp() + "***" );
                   bot.addMemberToRole(message.author.id, message.server.roles.get("name", insChar.class))
-                  if(adp > 3){
-              } else {
-              }
-                bot.reply( message, 'Something went wrong...' );
+              } else { bot.reply( message, 'Something went wrong...' );
                 console.log( err );
               }
             });
@@ -194,20 +204,7 @@ bot.on("message", function(message){
     /*for( var i = 0; i < resource1.length; i++) {
       rmvRoles(resource1[i])
     }*/
-  };
-
-  var createClassRoles = function (classC, classN) {
-   bot.createRole(message.server, {
-     color : classC,
-     hoist : true,
-     name : classN,
-     permissions : [
-
-     ],
-     mentionable : true
-   })
-   bot.sendMessage(message, "Created role: "+classN)
- }
+  }
 
   if(message.content.startsWith('Create Class Roles Please!') && bot.memberHasRole(message.author.id, message.server.roles.get("name", "Developer"))) {
     console.log("Develoepr has run create role command.")
