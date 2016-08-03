@@ -110,7 +110,7 @@ bot.on("message", function(message){
     //this clusterfuck of code.
     if( infoArray.length != 6 ) {
       console.log("incorrect input.")
-      bot.reply(message,"You fucked something up please retry.");
+      bot.reply(message,"You've entered your data with either too many or too little variables. That or it just did not make sense. Please type !Help for more information.");
     } else if( resource1.contains(infoArray[2]) && bot.memberHasRole(message.author.id, message.server.roles.get("name", "Vahlok"))) {
         db.findOne( { _id: message.author.id }, function( err, result ) {
           if( result ) {
@@ -136,7 +136,7 @@ bot.on("message", function(message){
                   + "Character Level: ***" + insChar.level + "***\n"
                   + "Last recorded AP: ***" + insChar.ap + "***\n"
                   + "Last recorded DP: ***" + insChar.dp + "***\n"
-                  + "*Combined AP/DP:* " + "***" + insChar.adp() + "***" );
+                  + "*Combined AP/DP:* " + "***" + insChar.adp() + "***" )
                   bot.addMemberToRole(message.author.id, message.server.roles.get("name", insChar.class))
               } else { bot.reply( message, 'Something went wrong...' );
                 console.log( err );
@@ -152,7 +152,7 @@ bot.on("message", function(message){
     }
   }
 
-  if( message.content.startsWith( 'whoi' ) ) {
+  if( message.content.startsWith( 'whoami' )) {
     db.findOne({ _id : message.author.id }, function ( err, result ){
       if( result ){
         var char = new Character( result, 'nedb' );
@@ -165,7 +165,7 @@ bot.on("message", function(message){
                   + "Last recorded DP: ***" + char.dp + "***\n"
                   + "*Combined AP/DP:* " + "***" + char.adp() + "***" );
       } else {
-        bot.reply( message, 'No record found for you, NOOB.' );
+        bot.reply( message, 'Your reccord is not in the database. Have you registered?' );
       }
     })
   }
@@ -219,7 +219,7 @@ bot.on("message", function(message){
     fs.writeFile('message.txt', catass)
   }
 
-  if(message.content.startsWith('!ListAll')) {
+  if(message.content.startsWith('!LA')) {
     db.find({}, function (err, doc) {
       var outputShit = ""
       if(err){
@@ -233,7 +233,9 @@ bot.on("message", function(message){
       }})
   }
 
-  if(message.content.match('Nightbot')) {bot.sendMessage(message, "Fuck a night bot, nigga.")}
+  if(message.content === "!Help") {
+    bot.sendMessage(message, "\n`Register Function: +FirstName LastName Class Level AP DP`\n`Query for your stored information: whoami`\n`Update data: ~AP \(new ap\), ~DP \(new dp\), ~lvl \(new level\)`")
+  }
 
 
   console.log("-------------------------------------------------------------------------")
