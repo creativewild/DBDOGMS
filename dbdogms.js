@@ -219,7 +219,7 @@ bot.on("message", function(message){
     fs.writeFile('message.txt', catass)
   }
 
-  if(message.content.startsWith('!LA')) {
+  if(message.content === '!LA') {
     db.find({}, function (err, doc) {
       var outputShit = ""
       if(err){
