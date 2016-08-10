@@ -129,14 +129,14 @@ bot.on("message", function(message){
             db.insert( doc, function( err, result ) {
               var insChar = new Character( result, 'nedb' );
               if( !err ) {
-                bot.reply( message," Your stored information is: \n"
-                  + "Character Name: ***" + insChar.firstName + "***\n"
-                  + "Family Name: ***" + insChar.familyName + "***\n"
-                  + "Class: ***" + insChar.class + "***\n"
-                  + "Character Level: ***" + insChar.level + "***\n"
-                  + "Last recorded AP: ***" + insChar.ap + "***\n"
-                  + "Last recorded DP: ***" + insChar.dp + "***\n"
-                  + "*Combined AP/DP:* " + "***" + insChar.adp() + "***" )
+                bot.reply( message," ***Your stored information.*** \n"
+                          + "```js\nCharacter Name: \"" + char.firstName + "\" \n"
+                          + "Family Name: \"" + char.familyName + "\" \n"
+                          + "Class: \"" + char.class + "\" \n"
+                          + "Character Level: " + char.level + " \n"
+                          + "Last recorded AP: " + char.ap + " \n"
+                          + "Last recorded DP: " + char.dp + " \n"
+                          + "Combined AP/DP: " + " " + char.adp() + "```" )
                   bot.addMemberToRole(message.author.id, message.server.roles.get("name", insChar.class))
               } else { bot.reply( message, 'Something went wrong...' );
                 console.log( err );
@@ -156,14 +156,14 @@ bot.on("message", function(message){
     db.findOne({ _id : message.author.id }, function ( err, result ){
       if( result ){
         var char = new Character( result, 'nedb' );
-        bot.reply( message," Your stored information is: \n"
-                  + "Character Name: ***" + char.firstName + "***\n"
-                  + "Family Name: ***" + char.familyName + "***\n"
-                  + "Class: ***" + char.class + "***\n"
-                  + "Character Level: ***" + char.level + "***\n"
-                  + "Last recorded AP: ***" + char.ap + "***\n"
-                  + "Last recorded DP: ***" + char.dp + "***\n"
-                  + "*Combined AP/DP:* " + "***" + char.adp() + "***" );
+        bot.reply( message," ***Your stored information.*** \n"
+                  + "```js\nCharacter Name: \"" + char.firstName + "\" \n"
+                  + "Family Name: \"" + char.familyName + "\" \n"
+                  + "Class: \"" + char.class + "\" \n"
+                  + "Character Level: " + char.level + " \n"
+                  + "Last recorded AP: " + char.ap + " \n"
+                  + "Last recorded DP: " + char.dp + " \n"
+                  + "Combined AP/DP: " + " " + char.adp() + "```" );
       } else {
         bot.reply( message, 'Your reccord is not in the database. Have you registered?' );
       }
@@ -219,7 +219,7 @@ bot.on("message", function(message){
     fs.writeFile('message.txt', catass)
   }
 
-  if(message.content === '!LA') {
+  if(message.content.match('LAGP')) {
     db.find({}, function (err, doc) {
       var outputShit = ""
       if(err){
@@ -229,7 +229,7 @@ bot.on("message", function(message){
           var oData = new Character( doc[i], 'nedb')
           outputShit+= monospaceColumnPad(oData.firstName, 12)+" "+monospaceColumnPad(oData.familyName, 12)+" "+monospaceColumnPad(oData.class, 9)+" "+monospaceColumnPad(oData.level.toString(), 5)+" "+monospaceColumnPad(oData.ap.toString(), 4)+" "+monospaceColumnPad(oData.dp.toString(), 4)+" "+monospaceColumnPad(oData.adp().toString(), 5)+"\n"
         }
-        bot.sendMessage(message, "```"+monospaceColumnPad("First Name", 13)+monospaceColumnPad("Last Name", 13)+monospaceColumnPad("Class", 10)+monospaceColumnPad("Level", 6)+monospaceColumnPad("AP", 5)+monospaceColumnPad("DP", 5)+monospaceColumnPad("AP/DP", 5)+"\n"+outputShit+"```")
+        bot.sendMessage("154974615968546816", "```"+monospaceColumnPad("First Name", 13)+monospaceColumnPad("Last Name", 13)+monospaceColumnPad("Class", 10)+monospaceColumnPad("Level", 6)+monospaceColumnPad("AP", 5)+monospaceColumnPad("DP", 5)+monospaceColumnPad("AP/DP", 5)+"\n"+outputShit+"```")
       }})
   }
 
@@ -237,6 +237,9 @@ bot.on("message", function(message){
     bot.sendMessage(message, "\n`Register Function: +FirstName LastName Class Level AP DP`\n`Query for your stored information: whoami`\n`Update data: ~AP \(new ap\), ~DP \(new dp\), ~lvl \(new level\)`")
   }
 
+  if(message.content.match("p2w" || "pay 2 win" || "pay to win" || "P2W")) {
+    bot.reply(message, "Please do not discuss this topic in the guild channels. Take it to PM's please.")
+  }
 
   console.log("-------------------------------------------------------------------------")
   console.log("["+message.author.username+"] Sent:\n\n"+message.content+"\n\nOn server: "+message.server.name+"\nOn Channel: "+message.channel.name+"\nAt time: "+Date());
