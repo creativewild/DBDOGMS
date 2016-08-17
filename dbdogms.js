@@ -26,6 +26,13 @@ try {
   process.exit();
 }
 
+try {
+  var moment = require( './lib/moment.js' );
+} catch( e ) {
+  console.log( e.stack );
+  console.log( 'Error loading Moment class.');
+}
+
 var bot = new Discord.Client(),
     //Requs for the database, linking the database to the db var
     db  = new Datastore({ filename: './database/data.db', autoload: true });
@@ -34,6 +41,7 @@ var bot = new Discord.Client(),
 bot.on("ready", ()=> {
   console.log('To add this bot to your server, open the below URL in your browser:\n'
     + 'https://discordapp.com/oauth2/authorize?client_id=' + Auth.appID + '&scope=bot');
+    bot.sendMessage("174892304635658241", "I'm active now.")
 });
 
   Array.prototype.contains = function(obj) {
@@ -83,7 +91,7 @@ bot.on("ready", ()=> {
 
 //This is the event catcher for messages. Any time a message is sent through discord and this picks it up, it runs the contents of the function(message) through it's loops.
 bot.on("message", function(message){
-  var resource1 = ["Warrior", "Sorceress", "Ranger", "Berserker", "Tamer", "Musa", "Maewha", "Valkyrie", "Wizard", "Witch", "Ninja", "Kunoichi"]
+  var resource1 = ["Warrior", "Sorceress", "Ranger", "Berserker", "Tamer", "Musa", "Maehwa", "Valkyrie", "Wizard", "Witch", "Ninja", "Kunoichi"]
   var resource2 = [0xFF7536, 0xC659F9, 0x54BFFF, 0x2CF3BC, 0xF6356C, 0x47B6FF, 0x9BF3FC, 0xFF8C4A, 0x7E32FC, 0xAA59FF, 0xBA235C, 0xC5186C]
   var createClassRoles = function (classC, classN) {
    bot.createRole(message.server, {
@@ -230,6 +238,7 @@ bot.on("message", function(message){
           outputShit+= monospaceColumnPad(oData.firstName, 12)+" "+monospaceColumnPad(oData.familyName, 12)+" "+monospaceColumnPad(oData.class, 9)+" "+monospaceColumnPad(oData.level.toString(), 5)+" "+monospaceColumnPad(oData.ap.toString(), 4)+" "+monospaceColumnPad(oData.dp.toString(), 4)+" "+monospaceColumnPad(oData.adp().toString(), 5)+"\n"
         }
         bot.sendMessage("154974615968546816", "```"+monospaceColumnPad("First Name", 13)+monospaceColumnPad("Last Name", 13)+monospaceColumnPad("Class", 10)+monospaceColumnPad("Level", 6)+monospaceColumnPad("AP", 5)+monospaceColumnPad("DP", 5)+monospaceColumnPad("AP/DP", 5)+"\n"+outputShit+"```")
+        console.log(outputShit)
       }})
   }
 
