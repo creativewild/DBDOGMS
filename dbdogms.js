@@ -245,11 +245,7 @@ bot.on("message", function(message){
   if(message.content === "!Help") {
     bot.sendMessage(message, "\n`Register Function: +FirstName LastName Class Level AP DP`\n`Query for your stored information: whoami`\n`Update data: ~AP \(new ap\), ~DP \(new dp\), ~lvl \(new level\)`")
   }
-
-  if(message.content.match("p2w" || "pay 2 win" || "pay to win" || "P2W")) {
-    bot.reply(message, "Please do not discuss this topic in the guild channels. Take it to PM's please.")
-  }
-
+  
   console.log("-------------------------------------------------------------------------")
   console.log("["+message.author.username+"] Sent:\n\n"+message.content+"\n\nOn server: "+message.server.name+"\nOn Channel: "+message.channel.name+"\nAt time: "+Date());
   console.log("-------------------------------------------------------------------------")
