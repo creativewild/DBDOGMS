@@ -32,16 +32,16 @@ try {
   console.log( e.stack );
   console.log( 'Error loading Moment class.');
 }
-
+try {
 var bot = new Discord.Client(),
     //Requs for the database, linking the database to the db var
-    db  = new Datastore({ filename: './database/data.db', autoload: true });
+    db  = new Datastore({ filename: 'C:/Users/Gray/Documents/_Vahlok/Vahlok Database/data.db', autoload: true });
 
 //This this prints FUCK. to the console when the bot is loaded successfully.
 bot.on("ready", ()=> {
   console.log('To add this bot to your server, open the below URL in your browser:\n'
     + 'https://discordapp.com/oauth2/authorize?client_id=' + Auth.appID + '&scope=bot');
-    bot.sendMessage("174892304635658241", "I'm active now.")
+    //bot.sendMessage("174892304635658241", "I'm active now.")
 });
 
   Array.prototype.contains = function(obj) {
@@ -156,7 +156,7 @@ bot.on("message", function(message){
          }
       })
     } else {
-      bot.reply(message, "\nYou have either entered an unauthorized class, or are not a member of Vahlok rank.\n Please correct your rank (Capital first letter) and or mention Fahdon.")
+      bot.reply(message, "\nYou have either entered an unauthorized class, or are not a member of Vahlok rank.\n Please correct your class (Capital first letter, correct spelling) and or mention Fahdon.")
     }
   }
 
@@ -180,7 +180,7 @@ bot.on("message", function(message){
 
   //broken and idk why.
   var rmvRoles = function(rlname) {
-    bot.removeMemberFromRole(message.author.id, message.server.roles.get("name", rlname), function ( err ) {console.log(err)})
+    bot.removeMemberFromRole(message.author.id, message.server.roles.get("name", rlname), function ( err ) {bot.sendMessage(message, "```"+err.stack+"```")})
   }
   //Update AP (BASE COMPLETE)
   if(message.content.startsWith('~ap')) {
@@ -208,10 +208,18 @@ bot.on("message", function(message){
   }
   //Delete From DB Command. (BASE COMPLETE-- Needs a fixin)
   if(message.content.startsWith('delMe')) {
+    db.findOne({ _id : message.author.id }, function ( err, result ){
+      try {
+      if( result ){
+        var char = new Character( result, 'nedb' );
+        var step1 = char.class
+        rmvRoles(step1)
+      } else {
+        console.log("hmm. Not quite.")
+      }
+    } catch (e) {bot.sendMessage(message, "```"+e.stack+"```")}
     db.remove({ _id : message.author.id }, { multi: true }, function (err, numRemoved) { if(err){bot.sendMessage(message, err)} else if (numRemoved == "0") { bot.sendMessage(message, numRemoved+" Records found. You were not in the Arcane Archives.")} else { bot.sendMessage(message, numRemoved+", Record deleted. You have been removed from my Database Dovahkin.") } })
-    /*for( var i = 0; i < resource1.length; i++) {
-      rmvRoles(resource1[i])
-    }*/
+    })
   }
 
   if(message.content.startsWith('Create Class Roles Please!') && bot.memberHasRole(message.author.id, message.server.roles.get("name", "Developer"))) {
@@ -245,10 +253,12 @@ bot.on("message", function(message){
   if(message.content === "!Help") {
     bot.sendMessage(message, "\n`Register Function: +FirstName LastName Class Level AP DP`\n`Query for your stored information: whoami`\n`Update data: ~AP \(new ap\), ~DP \(new dp\), ~lvl \(new level\)`")
   }
-  
-  console.log("-------------------------------------------------------------------------")
+
+
   console.log("["+message.author.username+"] Sent:\n\n"+message.content+"\n\nOn server: "+message.server.name+"\nOn Channel: "+message.channel.name+"\nAt time: "+Date());
   console.log("-------------------------------------------------------------------------")
 });
-
+} catch (e) {
+  console.log(e.stack)
+}
 bot.loginWithToken( Auth.token );
