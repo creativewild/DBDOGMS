@@ -32,7 +32,7 @@ try {
   console.log( e.stack );
   console.log( 'Error loading Moment class.');
 }
-try {
+
 var bot = new Discord.Client(),
     //Requs for the database, linking the database to the db var
     db  = new Datastore({ filename: 'C:/Users/Gray/Documents/_Vahlok/Vahlok Database/data.db', autoload: true });
@@ -235,7 +235,8 @@ bot.on("message", function(message){
     fs.writeFile('message.txt', catass)
   }
 
-  if(message.content.match('LAGP')) {
+  //Temp fix for list all in database.
+  if(message.content.match('refreshGI')) {
     db.find({}, function (err, doc) {
       var outputShit = ""
       if(err){
@@ -245,20 +246,43 @@ bot.on("message", function(message){
           var oData = new Character( doc[i], 'nedb')
           outputShit+= monospaceColumnPad(oData.firstName, 12)+" "+monospaceColumnPad(oData.familyName, 12)+" "+monospaceColumnPad(oData.class, 9)+" "+monospaceColumnPad(oData.level.toString(), 5)+" "+monospaceColumnPad(oData.ap.toString(), 4)+" "+monospaceColumnPad(oData.dp.toString(), 4)+" "+monospaceColumnPad(oData.adp().toString(), 5)+"\n"
         }
-        bot.sendMessage("154974615968546816", "```"+monospaceColumnPad("First Name", 13)+monospaceColumnPad("Last Name", 13)+monospaceColumnPad("Class", 10)+monospaceColumnPad("Level", 6)+monospaceColumnPad("AP", 5)+monospaceColumnPad("DP", 5)+monospaceColumnPad("AP/DP", 5)+"\n"+outputShit+"```")
-        console.log(outputShit)
+        //bot.sendMessage("154974615968546816", "```"+monospaceColumnPad("First Name", 13)+monospaceColumnPad("Last Name", 13)+monospaceColumnPad("Class", 10)+monospaceColumnPad("Level", 6)+monospaceColumnPad("AP", 5)+monospaceColumnPad("DP", 5)+monospaceColumnPad("AP/DP", 5)+"\n"+outputShit+"```")
+        fs.writeFile("C:/Users/Gray/Documents/Outputs/OutputData.txt", outputShit)
       }})
+  }
+  //Temp fix for list all in database.
+  if(message.content === "getGI") {
+    bot.sendFile("154974615968546816","C:/Users/Gray/Documents/Outputs/OutputData.txt").catch(function(err){console.log(err)})
   }
 
   if(message.content === "!Help") {
     bot.sendMessage(message, "\n`Register Function: +FirstName LastName Class Level AP DP`\n`Query for your stored information: whoami`\n`Update data: ~AP \(new ap\), ~DP \(new dp\), ~lvl \(new level\)`")
   }
 
+  //not working. Will have to fix another time. Supposed to be fore deleting messages and shit lol.
+  if(message.content === "FDSUCHANNEL" & message.author.id === "92738910362292224") {
+    var meowth = bot.getChannelLogs(message.channel, 5).catch(function(err) {
+      console.log("Error getting lgos: ", err)
+    }).then(function(logs){
+      //bot.sendMessage(message, logs)
+      fs.writeFile("./cats", logs).catch(function(err){console.log("error creating/writing file: " + err)})
+    })
+    //bot.deleteMessages(meowth).catch(function(err){bot.sendMessage(message, "error deleting last 5 messages: "+ err)})
+  }
 
-  console.log("["+message.author.username+"] Sent:\n\n"+message.content+"\n\nOn server: "+message.server.name+"\nOn Channel: "+message.channel.name+"\nAt time: "+Date());
-  console.log("-------------------------------------------------------------------------")
-});
-} catch (e) {
-  console.log(e.stack)
+  if(message.content === "testPM") {
+    try {
+      bot.sendMessage(message.author.id, "Works")
+    } catch(e) {
+      bot.sendMessage(message,"```"+e.stack+"```")
+    }
+  }
+
+if(message.channel.isPrivate === true){
+  bot.sendMessage(message, "Send PM.")
+}else{
+    console.log("["+message.author.username+"] Sent:\n\n"+message.content+"\n\nOn server: "+message.server.name+"\nOn Channel: "+message.channel.name+"\nAt time: "+Date());
+    console.log("-------------------------------------------------------------------------")
 }
+});
 bot.loginWithToken( Auth.token );
