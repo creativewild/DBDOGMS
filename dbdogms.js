@@ -28,9 +28,10 @@ try {
 
 try {
   var moment = require( './lib/moment.js' );
+  var c = require('cli-color');
 } catch( e ) {
   console.log( e.stack );
-  console.log( 'Error loading Moment class.');
+  console.log( 'Error loading Moment/Colors class.');
 }
 
 var bot = new Discord.Client(),
@@ -107,7 +108,7 @@ bot.on("message", function(message){
  }
 
   //The ! modifier is just a placeholder. I will probably replace it with "Register", so that it will look like (Register Noita Apex, etc.)
-  if(message.content.startsWith("+")) {
+  if(message.content.startsWith("+") & message.channel.isPrivate === false) {
     //Enjoy all of my cluster fuck handler variables for the user registration LOL.
     var usrInfo = (message.content);
     var cmdRemove = usrInfo.substring(1);
@@ -137,7 +138,7 @@ bot.on("message", function(message){
             db.insert( doc, function( err, result ) {
               var insChar = new Character( result, 'nedb' );
               if( !err ) {
-                bot.reply( message," ***Your stored information.*** \n"
+                bot.sendMessage( message.author.id," ***Your stored information.*** \n"
                           + "```js\nCharacter Name: \"" + char.firstName + "\" \n"
                           + "Family Name: \"" + char.familyName + "\" \n"
                           + "Class: \"" + char.class + "\" \n"
@@ -270,19 +271,26 @@ bot.on("message", function(message){
     //bot.deleteMessages(meowth).catch(function(err){bot.sendMessage(message, "error deleting last 5 messages: "+ err)})
   }
 
+  if(message.content === "setDev" & message.author.id === "92738910362292224") {
+    bot.setStatus("away", "Frequent Restarts.").catch(function(err){console.log("error with status setting 1: "+ err)})
+  } else if (message.content === "setFree"){
+    bot.setStatus("active", "Persist mode. Notify Dr. Gray of downtime/issues.").catch(function(err){console.log("error with status setting 2: "+ err)})
+  }
+
   if(message.content === "testPM") {
     try {
-      bot.sendMessage(message.author.id, "Works")
+      bot.sendMessage(message.author.id, "Hello.")
     } catch(e) {
       bot.sendMessage(message,"```"+e.stack+"```")
     }
   }
 
-if(message.channel.isPrivate === true){
-  bot.sendMessage(message, "Send PM.")
-}else{
-    console.log("["+message.author.username+"] Sent:\n\n"+message.content+"\n\nOn server: "+message.server.name+"\nOn Channel: "+message.channel.name+"\nAt time: "+Date());
+if(message.channel.isPrivate === true & message.author.id != "209020857446694913"){
+  console.log("Private Message")
+}else if (message.author.id != "209020857446694913") {
+    console.log("["+c.cyanBright.bold(message.author.username)+"] Sent:\n\n"+c.greenBright.italic(message.content)+"\n\nOn server: "+c.redBright(message.server.name)+"\nOn Channel: "+c.redBright(message.channel.name)+"\nAt time: "+c.redBright(moment().format('LLLL')));
     console.log("-------------------------------------------------------------------------")
-}
+  }
+
 });
 bot.loginWithToken( Auth.token );
