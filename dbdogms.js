@@ -251,10 +251,12 @@ bot.on("message", function(message){
         //bot.sendMessage("154974615968546816", "```"+monospaceColumnPad("First Name", 13)+monospaceColumnPad("Last Name", 13)+monospaceColumnPad("Class", 10)+monospaceColumnPad("Level", 6)+monospaceColumnPad("AP", 5)+monospaceColumnPad("DP", 5)+monospaceColumnPad("AP/DP", 5)+"\n"+outputShit+"```")
         fs.writeFile("C:/Users/Gray/Documents/Outputs/OutputData.txt", outputShit)
       }})
+      bot.sendMessage(message,"Refreshed User Data File for ***"+moment().format('LLLL')+"***")
   }
   //Temp fix for list all in database.
   if(message.content === "getGI") {
     bot.sendFile("154974615968546816","C:/Users/Gray/Documents/Outputs/OutputData.txt").catch(function(err){console.log(err)})
+    bot.sendMessage(message, "File Uploaded.")
   }
 
   if(message.content === "!Help") {
