@@ -119,7 +119,7 @@ bot.on("message", function(message){
     //this clusterfuck of code.
     if( infoArray.length != 6 ) {
       console.log("incorrect input.")
-      bot.reply(message,"You've entered your data with either too many or too little variables. That or it just did not make sense. Please type !Help for more information.").then(bot.deleteMessage(message).catch(function(err){console.log("Error With Delete + Message Process: "+err)}));
+      bot.reply(message,"You've entered your datad with either too many or too little variables. That or it just did not make sense. Please type !Help for more information.").then(bot.deleteMessage(message).catch(function(err){console.log("Error With Delete + Message Process: "+err)}));
     } else if( resource1.contains(infoArray[2]) && bot.memberHasRole(message.author.id, message.server.roles.get("name", "Vahlok"))) {
         db.findOne( { _id: message.author.id }, function( err, result ) {
           if( result ) {
