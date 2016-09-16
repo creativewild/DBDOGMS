@@ -1,5 +1,6 @@
 database/*
 auth.json
+setTest.json
 
 # Logs
 logs
