@@ -6,6 +6,7 @@ It will automatically assign your role based on the Class you've typed in as wel
 send a private message containing the data you've registered with AND delete your registration
 command for privacy.
 "+[First name] [Last Name] [Class] [Level] [AP] [DP]"
+Example, +Noita Apex Wizard 56 200 999
 
 -- whoami command is to query who you are in the database.
 This command can be run in either a private message or server chat.
@@ -19,30 +20,4 @@ to see the update. The bot will respond with a confirmation if you've done it co
 -- Removing yourself from the Odexes Database can be done with this command.
 Removing yourself will delete your looged information as well as remove your class role.
 "delMe"
-
--- Refreshing guild info file.
-This command is used by GM / Officers to reload the data stored in the guild data file
-which is used for upload using getGI
-"refreshGI"
-
--- Retrieving guild info file
-This command is used by GM/Officers to command the bot to upload the GI file to the
-admin channel.
-"getGI"
-
---[DEV] Creating class roles.
-This is a setup command, used for preping server functionality.
-The bot will not run without the class roles.
-"Create Class Roles Please!"
-
---[DEV] Deleting class roles.
-This is a deconstruct command that will delete all of the class roles
-on the server. The server administrator(whoever is incharge of the db)
-will need to drop the database to remove all entries.
-"Delete Class Roles Please!"
-
---[DEV] Outputting users in role.
-This command returns a list of all users that belong to specified role to file.
-File will be stored on the server the bot is running in.
-"Output Users"
 ```

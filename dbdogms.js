@@ -83,6 +83,7 @@ function monospaceColumnPad( string, width = 10, padChar = " " )
     return string;
   }
 }
+
 //This is the event catcher for messages. Any time a message is sent through discord and this picks it up, it runs the contents of the function(message) through it"s loops.
 bot.on("message", function(message){
   var resource1 = ["Warrior", "Sorceress", "Ranger", "Berserker", "Tamer", "Musa", "Maehwa", "Valkyrie", "Wizard", "Witch", "Ninja", "Kunoichi"];
@@ -115,7 +116,7 @@ bot.on("message", function(message){
   var rmvRoles = function(rlname) {
     message.guild.member(message.author).removeRole(rlname), function ( err ) {message.channel.sendMessage( "```"+err.stack+"```");};
   };
-  //Registration command
+  //Registration command     message.member.roles.exists("name", sets.OFFICER_RANK)
   if(sent.startsWith("+") && message.member.roles.exists("name", sets.MEMBER_RANK)) {
     //Enjoy all of my cluster fuck handler variables for the user registration LOL.
     var usrInfo = (sent);
@@ -237,7 +238,7 @@ bot.on("message", function(message){
     message.channel.sendMessage( "File Uploaded.");
   }
   //Help file
-  if(sent === "!Help"||sent === "!help") {
+  if(sent.toLowerCase() === "!help") {
     //message.channel.sendMessage("This feature is currently being reworked. Thanks!");
     //message.channel.sendMessage( "\n`Register Function: +FirstName LastName Class Level AP DP`\n`Query for your stored information: whoami`\n`Update data: ~AP \(new ap\), ~DP \(new dp\), ~lvl \(new level\)`");
     fs.readFile("C:/Users/Gray/Documents/GitHub/DBDOGMS/help.txt", function (err, data){
@@ -277,8 +278,18 @@ bot.on("message", function(message){
     bot.user.setStatus("active", "Happy birthday Asuna!!").catch(function(err){console.log("error with status setting 2: "+ err);});
     console.log("Persistent Mode Set.");
   }
-/*
-  if(message.channel.isPrivate === true & message.author.id != "209020857446694913"){
+
+  if(sent == "Shutdown Please." && message.author.id === sets.MASTER) {
+    console.log("Shuting down");
+    bot.destroy();
+  }
+
+  /*if(sent.startsWith("catTest")){
+    var vcList = bot.channels.find("158432201816539136").members;
+    message.channel.sendMessage(vcList);
+    console.log(vcList);
+  }*/
+  /*if(message.channel.isPrivate === true & message.author.id != "209020857446694913"){
     console.log("Private Message")
   }else if (message.author.id != "209020857446694913") {
     console.log("["+c.cyanBright.bold(message.author.username)+"] Sent:\n\n"+c.greenBright.italic(sent)+"\n\nOn server: "+c.redBright(message.server.name)+"\nOn Channel: "+c.redBright(message.channel.name)+"\nAt time: "+c.redBright(moment().format("LLLL")));
