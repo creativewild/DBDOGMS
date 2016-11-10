@@ -117,7 +117,7 @@ bot.on("message", function(message){
     message.guild.member(message.author).removeRole(rlname), function ( err ) {message.channel.sendMessage( "```"+err.stack+"```");};
   };
   //Registration command     message.member.roles.exists("name", sets.OFFICER_RANK)
-  if(sent.startsWith("+") && message.member.roles.exists("name", sets.MEMBER_RANK)) {
+  if(sent.startsWith("+") && message.member.roles.exists("name", sets.MEMBER_RANK) && message.channel.id == "174892304635658241") {
     //Enjoy all of my cluster fuck handler variables for the user registration LOL.
     var usrInfo = (sent);
     var cmdRemove = usrInfo.substring(1);
